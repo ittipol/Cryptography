@@ -2,10 +2,17 @@ package main
 
 import (
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"go-encryption/encryption"
 	"math/big"
+	"unicode/utf8"
 )
+
+type product struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
 
 const (
 	keyList string = "abcdefghijklmnopqrstuvwxyzABCDEFHFGHIJKLMNOPQRSTUVWXYZ1234567890"
@@ -14,29 +21,33 @@ const (
 func main() {
 
 	key := keyGen()
+	// key2 := keyGen()
 
 	println("KEY: " + key)
 	// cipher key
 	// key := "C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPd3"
 
-	// count := utf8.RuneCountInString("oxQSX9iBdPe6mUk8iunwdYLG0a+PD8MngMYz0lofyfM=")
+	count := utf8.RuneCountInString("krungsrimobile00")
+	fmt.Printf("Count: %v\n", count)
 
-	cipherText, _ := encryption.EncryptMessage([]byte(key), "This is message")
+	data := product{
+		ID:   1,
+		Name: "TEST",
+	}
 
-	println(cipherText)
+	json, _ := json.Marshal(data)
 
-	decodedStr, _ := encryption.DecryptMessage([]byte(key), cipherText)
+	cipherText, _ := encryption.EncryptMessage([]byte(key), string(json))
+	_ = cipherText
+	// println(err.Error())
 
-	println(decodedStr)
+	decodedStr, err := encryption.DecryptMessage([]byte(key), cipherText)
 
-	// plaintext
-	// pt := "This is a secret"
+	if err != nil {
+		panic(err.Error())
+	}
 
-	// cipherText := encryption.EncryptAES([]byte(key), pt)
-
-	// fmt.Println(cipherText)
-
-	// encryption.DecryptAES([]byte(key), cipherText)
+	println("Result: " + decodedStr)
 
 }
 
