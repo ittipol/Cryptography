@@ -31,3 +31,13 @@
 - ES256 - EC P-256 DSA with SHA-256
 - ES384 - EC P-384 DSA with SHA-384
 - ES512 - EC P-521 DSA with SHA-512
+
+# Password
+- A - Slow Hashing (bcrypt, scrypt, Argon2)
+> - Run slowly
+> - Use tons of power
+> - Use tons of memory
+- B - Hashing + Salting
+- C - Hashing
+- D - Encrypting
+- F - Storing in plaintext
