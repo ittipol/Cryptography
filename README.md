@@ -33,6 +33,14 @@
 - ES512 - EC P-521 DSA with SHA-512
 
 # Password
+## Hashing Password
+According to the Open Worldwide Application Security Project (OWASP) should:
+- Use Argon2id
+- Use bcrypt
+- Use scrypt (for legacy systems)
+- Use PBKDF2 with HMAC-SHA-256 (for FIPS-140 compliance)
+
+## Password Storing
 - A - Slow Hashing (bcrypt, scrypt, Argon2)
 > - Run slowly
 > - Use tons of power
