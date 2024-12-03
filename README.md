@@ -1,6 +1,7 @@
 # Cryptography
 
 ## Symmetric Encryption
+Use a same key both encrypts and decrypts data
 - Data Encryption Standard (DES)
 - Triple Data Encryption Standard (Triple DES)
 - Advanced Encryption Standard (AES)
@@ -8,6 +9,7 @@
 - TLS/SSL protocol
 
 ## Asymmetric Encryption
+Use a public key-private key pairing: data encrypted with the public key can only be decrypted with the private key
 - Rivest Shamir Adleman (RSA)
 - the Digital Signature Standard (DSS), which incorporates - the Digital Signature Algorithm (DSA)
 - Elliptical Curve Cryptography (ECC)

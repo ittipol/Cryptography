@@ -27,8 +27,10 @@ func main() {
 	// cipher key
 	// key := "C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPd3"
 
-	count := utf8.RuneCountInString("krungsrimobile00")
-	fmt.Printf("Count: %v\n", count)
+	text := "ทดสอบนับตัวอักษร"
+
+	count := utf8.RuneCountInString(text)
+	fmt.Printf("Count: %v [%s]\n", count, text)
 
 	data := product{
 		ID:   1,
@@ -40,6 +42,8 @@ func main() {
 	cipherText, _ := encryption.EncryptMessage([]byte(key), string(json))
 	_ = cipherText
 	// println(err.Error())
+
+	fmt.Printf("cipherText[Base64]: %s\n", cipherText)
 
 	decodedStr, err := encryption.DecryptMessage([]byte(key), cipherText)
 
