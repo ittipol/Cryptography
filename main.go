@@ -40,7 +40,7 @@ func main() {
 	json, _ := json.Marshal(data)
 
 	cipherText, _ := encryption.EncryptMessage([]byte(key), string(json))
-	_ = cipherText
+	// _ = cipherText
 	// println(err.Error())
 
 	fmt.Printf("cipherText[Base64]: %s\n", cipherText)
@@ -69,4 +69,17 @@ func keyGen() (keyString string) {
 	}
 
 	return
+}
+
+func testRsaEncryption(plaintext string) (string, []byte, string) {
+
+	// Gen RSA key-pair
+	_, publicKey := encryption.GenRsaKey()
+
+	encryptedBytes := encryption.Encryption(plaintext, publicKey)
+
+	// Convert the encrypted bytes to encrypted text.
+	dst := encryption.EncodeBase64(encryptedBytes)
+
+	return string(encryptedBytes), encryptedBytes, string(dst)
 }
