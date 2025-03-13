@@ -127,7 +127,6 @@ echo -n 'message' |  openssl aes-256-cbc -e -K {$key} -iv {$iv} | xxd -p
 
 # AES256 decrypt
 echo -n '{ciphertext}' | xxd -p -r | openssl aes-256-cbc -d -K {$key} -iv {$iv}
-
 ```
 
 **Asymmetric Key Encryption Algorithms** \
@@ -140,9 +139,22 @@ Use a public key-private key pairing: data encrypted with the public key can onl
 ``` bash
 # Generate a private key and a public key in PEM format
 openssl genrsa -out key.pem 2048
+openssl genrsa -out key.pem 3072
+openssl genrsa -out key.pem 4096
 
 # Extract the public key in PEM format
 openssl rsa -in key.pem -outform PEM -pubout -out key.pem.pub
+
+# RSA encryption (Base64 format)
+echo 'message' | openssl rsautl -encrypt -pubin -inkey key.pem.pub | base64 > encrypted_data
+# RSA decryption (Base64 format)
+cat encrypted_data | base64 -d | openssl rsautl -decrypt -inkey key.pem
+# echo '{base64}' | base64 -d | openssl rsautl -decrypt -inkey key.pem
+
+# RSA encryption (from file)
+openssl rsautl -encrypt -in ./message.txt -out ./ciphertext -pubin -inkey key.pem.pub
+# RSA decryption (from file)
+openssl rsautl -decrypt -in ./ciphertext -out ./plaintext -inkey key.pem
 ```
 
 **Digital Signature Algorithms**
@@ -164,10 +176,32 @@ openssl rsa -in key.pem -outform PEM -pubout -out key.pem.pub
 - HMAC (Hash-Based Message Authentication Code)
 
 ``` bash
-openssl x509 -noout -fingerprint -sha256 -inform pem -in /path/to/cert
-
 # HMAC-SHA256
 echo -n "message" | openssl dgst -sha256 -hmac secret_key
+```
+
+## Certificate
+``` bash
+# Generate a private key and a public key in PEM format
+openssl genrsa -out key.pem 4096
+
+# Generate a self-signed certificate
+openssl req -new -x509 -key key.pem -out cert.pem -days 365
+
+# Get certificate fingerprint
+openssl x509 -noout -fingerprint -sha256 -inform pem -in cert.pem
+
+# Generate Personal Information Exchange (.pfx) file
+openssl pkcs12 -export -inkey key.pem -in cert.pem -out cert.pfx
+
+# Convert .pfx file to .pem format
+openssl pkcs12 -in cert.pfx -out certificate.pem -nodes
+
+# Extract private key from .pfx file
+openssl pkcs12 -in cert.pfx -nocerts -out server.key
+
+# Extract cert from .pfx file
+openssl pkcs12 -in cert.pfx -clcerts -nokeys -out server.crt
 ```
 
 ## JWT • JWS • JWE • JWA • JWK
