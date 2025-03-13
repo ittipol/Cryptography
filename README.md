@@ -111,6 +111,25 @@ Use a same key both encrypts and decrypts data
 - International Data Encryption Algorithm (IDEA)
 - TLS/SSL protocol
 
+``` bash
+# Key
+# Random 256-bit key (32 bytes)
+# Hex format
+key = 561157f52ef5baf22e2781223fb9b46aede672371a4d160aff625dfdb1948e8c
+
+# IV
+# Random 128-bit key (16 bytes)
+# Hex format
+iv = e5f40aa9ee68b85f2ac2b90119d132c3
+
+# AES256 encrypt
+echo -n 'message' |  openssl aes-256-cbc -e -K {$key} -iv {$iv} | xxd -p
+
+# AES256 decrypt
+echo -n '{ciphertext}' | xxd -p -r | openssl aes-256-cbc -d -K {$key} -iv {$iv}
+
+```
+
 **Asymmetric Key Encryption Algorithms** \
 Use a public key-private key pairing: data encrypted with the public key can only be decrypted with the private key
 - Rivest Shamir Adleman (RSA)
