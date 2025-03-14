@@ -131,8 +131,10 @@ openssl x509 -in server.crt -text -noout
 **Check the modulus of an SSL certificate and private key** \
 Hash value of certificate modulus must be equal with hash value of private key modulus
 ``` bash
+# Hash value of private key modulus
 openssl rsa -noout -modulus -in server.key | openssl sha256
 
+# Hash value of certificate modulus
 openssl x509 -noout -modulus -in server.crt | openssl sha256
 ```
 
