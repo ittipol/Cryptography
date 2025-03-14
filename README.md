@@ -1,7 +1,7 @@
 # Cryptography
 
 ## Public Key Infrastructure (PKI)
-**Symmetric key encryption / Secret key encryption**
+### Symmetric key encryption / Secret key encryption
 ```
 Plaintext 
   —> Encryption (use symmetric key) 
@@ -10,7 +10,7 @@ Plaintext
         -> Plaintext
 ```
 
-**Asymmetric key encryption / Public key encryption**
+### Asymmetric key encryption / Public key encryption
 ```
 Plaintext 
   —> Encryption (use public key) 
@@ -19,32 +19,74 @@ Plaintext
         -> Plaintext
 ```
 
-**Digital signature**
+### Digital signature
 ```
-Original text 
+Original text
   —> Signing (use private key) 
-    -> Signed text 
+    -> Signed text (signature)
       -> Verifying (use public key) 
         -> Verified text
 ```
 
-**One way hash**
+### One way hash
 ```
 Plaintext
   -> Hash with hashing Algorithms
     -> Message digest / Fingerprint
 ```
+**Sender generate hash value (Message digest / Fingerprint)**
+1. Sender create a message/data for sending to receiver
+2. Sender hash a message/data with hash algorithms (SHA256, SHA512)
+3. Sender send a message/data and hash value to receiver
 
-**Secure digital signature**
+**Receiver verify a message/data**
+1. Receiver receive a message/data and hash value from sender
+2. Receiver hash a message/data with hash algorithms same as sender (SHA256, SHA512)
+3. Receiver compare a hash value with sender hash value
+4. The both hash value must be equal, Otherwise if not equal, It mean a message/data is not send from trusted sender
+
+### Secure digital signature
 ```
 Plaintext [1]
-  -> Hash with hashing Algorithms
+  -> Hash with hashing algorithms
     -> Message digest
       -> Signing Message digest [2] (use private key)
         -> Plaintext [1] + Signature [2]
 ```
 
-**X.509 certificate (Digital Certificate)**
+**Sender sign a digital signature**
+1. Sender hash a message with hash algorithms
+2. Sender generate an asymmetric key (public key and private key)
+3. Sender encrypt a hash value with private key
+4. Sender send a message and secure digital signature to receiver
+
+``` bash
+# Create source file
+echo 'message' > data.txt
+
+# Generate a private key and a public key in PEM format
+openssl genrsa -out key.pem 4096
+
+# Extract the public key in PEM format
+openssl rsa -in key.pem -outform PEM -pubout -out key.pem.pub
+
+# Hash a message/data with hash algorithms and sign with private key
+openssl dgst -sha256 -sign key.pem -out sign.sha256 data.txt
+
+# Encode to base64 format
+openssl enc -base64 -in sign.sha256 -out sign.sha256.base64
+```
+
+**Receiver verify a digital signature**
+``` bash
+# Decode base64 format
+openssl enc -base64 -d -in sign.sha256.base64 -out sign.sha256
+
+# Verify the signature
+openssl dgst -sha256 -verify key.pem.pub -signature sign.sha256 data.txt
+```
+
+### X.509 certificate (Digital Certificate)
 ```
 CA (Certification Authority)
   -> Generate Digital Certificate (Public key and Digital Signature)
@@ -57,7 +99,49 @@ Root CA
     -> My Certificate
 ```
 
-**Digital envelope**
+**Create a self-signed certificate**
+1. Generate certificate authority and trust certificate (CA)
+``` bash
+openssl genrsa -passout pass:${password} -des3 -out ca.key 4096
+
+openssl req -passin pass:${password} -new -x509 -sha256 -days 365 -key ca.key -out ca.crt -subj "/CN=${server_common_name}"
+# -subj "/C=${c}/ST=${st}/L=${l}/O=${o}/OU=${ou}/CN=${cn}"
+```
+
+2. Generate the private key and public key
+``` bash
+openssl genrsa -passout pass:${password} -des3 -out server.key 4096
+```
+
+3. Create certificate signing request (CSR)
+``` bash
+openssl req -passin pass:${password} -new -sha256 -key server.key -out server.csr -subj "/CN=${server_common_name}" -config ${config_file}
+```
+
+4. Sign the certificate with the CA
+``` bash
+openssl x509 -req -passin pass:${password} -sha256 -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt -extensions req_ext -extfile ${config_file}
+```
+
+**Read a certificate**
+``` bash
+openssl x509 -in server.crt -text -noout
+```
+
+**Check the modulus of an SSL certificate and private key** \
+Hash value of certificate modulus must be equal with hash value of private key modulus
+``` bash
+openssl rsa -noout -modulus -in server.key | openssl sha256
+
+openssl x509 -noout -modulus -in server.crt | openssl sha256
+```
+
+**Get certificate fingerprint**
+``` bash
+openssl x509 -noout -fingerprint -sha256 -inform pem -in server.crt
+```
+
+### Digital envelope
 **Sender**
 1. Sender encrypt data and send to receiver
     1. Sender generate secret key [1]
@@ -78,8 +162,7 @@ Root CA
 3. Receiver decrypt encrypted data with secret key [1]
 4. Receiver can now read the data
 
-**Secure negotiated sessions using SSL**
-
+### Secure negotiated sessions using SSL
 1. TCP handshake
 2. Certificate check
     1. Server send a certificate (Public key and Digital Signature) to client
@@ -103,7 +186,7 @@ Root CA
         4. Client decrypt an encrypted data with session key (secret key)
 
 ## Cryptography algorithms
-**Symmetric Key Encryption Algorithms** \
+### Symmetric Key Encryption Algorithms
 Use a same key both encrypts and decrypts data
 - Data Encryption Standard (DES)
 - Triple Data Encryption Standard (Triple DES)
@@ -129,7 +212,7 @@ echo -n 'message' |  openssl aes-256-cbc -e -K {$key} -iv {$iv} | xxd -p
 echo -n '{ciphertext}' | xxd -p -r | openssl aes-256-cbc -d -K {$key} -iv {$iv}
 ```
 
-**Asymmetric Key Encryption Algorithms** \
+### Asymmetric Key Encryption Algorithms
 Use a public key-private key pairing: data encrypted with the public key can only be decrypted with the private key
 - Rivest Shamir Adleman (RSA)
 - the Digital Signature Standard (DSS), which incorporates - the Digital Signature Algorithm (DSA)
@@ -157,17 +240,17 @@ openssl rsautl -encrypt -in ./message.txt -out ./ciphertext -pubin -inkey key.pe
 openssl rsautl -decrypt -in ./ciphertext -out ./plaintext -inkey key.pem
 ```
 
-**Digital Signature Algorithms**
+### Digital Signature Algorithms
 - RSA (RC4)
 - the Digital Signature Standard (DSS), which incorporates - the Digital Signature Algorithm (DSA)
 - SHA, MD2, MD5
 - Elliptical Curve DSA
 
-**Key Exchange Algorithms (Digital Envelope)**
+### Key Exchange Algorithms (Digital Envelope)
 - RSA, ANSI x9.17
 - the Diffie-Hellman exchange method
 
-**Hash function**
+### Hash algorithms
 - MD5
 - SHA-224
 - SHA-256
@@ -176,11 +259,17 @@ openssl rsautl -decrypt -in ./ciphertext -out ./plaintext -inkey key.pem
 - HMAC (Hash-Based Message Authentication Code)
 
 ``` bash
+# SHA-256
+echo 'message' | openssl dgst -sha256
+
+# SHA-512
+echo 'message' | openssl dgst -sha512
+
 # HMAC-SHA256
 echo -n "message" | openssl dgst -sha256 -hmac secret_key
 ```
 
-## Certificate
+## X.509 certificate
 ``` bash
 # Generate a private key and a public key in PEM format
 openssl genrsa -out key.pem 4096
