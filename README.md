@@ -340,7 +340,7 @@ Use for creating the JWE Encrypted Key
 - ES384 - EC P-384 DSA with SHA-384
 - ES512 - EC P-521 DSA with SHA-512
 
-# Password
+## Password
 **Hashing Password**
 According to the Open Worldwide Application Security Project (OWASP) should:
 - Use Argon2id
