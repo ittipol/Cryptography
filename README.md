@@ -271,6 +271,14 @@ echo 'message' | openssl dgst -sha512
 echo -n "message" | openssl dgst -sha256 -hmac secret_key
 ```
 
+``` bash
+# Create source file
+echo 'message' > data.txt
+
+# SHA-256
+openssl dgst -sha256 data.txt
+```
+
 ## X.509 certificate
 ``` bash
 # Generate a private key and a public key in PEM format
