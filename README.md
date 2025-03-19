@@ -62,7 +62,7 @@ Plaintext [1]
 
 ``` bash
 # Create source file
-echo 'message' > data.txt
+echo -n 'message' > data.txt
 
 # Generate a private key and a public key in PEM format
 openssl genrsa -out key.pem 4096
@@ -231,10 +231,10 @@ openssl genrsa -out key.pem 4096
 openssl rsa -in key.pem -outform PEM -pubout -out key.pem.pub
 
 # RSA encryption (Base64 format)
-echo 'message' | openssl rsautl -encrypt -pubin -inkey key.pem.pub | base64 > encrypted_data
+echo -n 'message' | openssl rsautl -encrypt -pubin -inkey key.pem.pub | base64 > encrypted_data
 # RSA decryption (Base64 format)
 cat encrypted_data | base64 -d | openssl rsautl -decrypt -inkey key.pem
-# echo '{base64}' | base64 -d | openssl rsautl -decrypt -inkey key.pem
+# echo -n '{base64}' | base64 -d | openssl rsautl -decrypt -inkey key.pem
 
 # RSA encryption (from file)
 openssl rsautl -encrypt -in ./message.txt -out ./ciphertext -pubin -inkey key.pem.pub
@@ -262,10 +262,10 @@ openssl rsautl -decrypt -in ./ciphertext -out ./plaintext -inkey key.pem
 
 ``` bash
 # SHA-256
-echo 'message' | openssl dgst -sha256
+echo -n 'message' | openssl dgst -sha256
 
 # SHA-512
-echo 'message' | openssl dgst -sha512
+echo -n 'message' | openssl dgst -sha512
 
 # HMAC-SHA256
 echo -n "message" | openssl dgst -sha256 -hmac secret_key
@@ -273,7 +273,7 @@ echo -n "message" | openssl dgst -sha256 -hmac secret_key
 
 ``` bash
 # Create source file
-echo 'message' > data.txt
+echo -n 'message' > data.txt
 
 # SHA-256
 openssl dgst -sha256 data.txt
