@@ -277,6 +277,9 @@ echo -n 'message' > data.txt
 
 # SHA-256
 openssl dgst -sha256 data.txt
+
+openssl dgst -sha256 istio-1.25.0-osx-arm64.tar.gz
+openssl dgst -sha256 Python-3.11.1.tgz
 ```
 
 ## X.509 certificate
@@ -347,6 +350,16 @@ Use for creating the JWE Encrypted Key
 - ES256 - EC P-256 DSA with SHA-256
 - ES384 - EC P-384 DSA with SHA-384
 - ES512 - EC P-521 DSA with SHA-512
+
+## Key size
+96-bit = 12 byte \
+128-bit = 16 byte \
+192-bit = 24 byte \
+256-bit = 32 byte \
+384-bit = 48 byte \
+512-bit = 64 byte \
+2048-bit = 256 byte \
+4096-bit = 512 byte
 
 ## Password
 **Hashing Password**
