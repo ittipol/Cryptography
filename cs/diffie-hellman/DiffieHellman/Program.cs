@@ -4,14 +4,15 @@ using System.Security.Cryptography;
 
 var rand = new Random();
 
-ulong n = Convert.ToUInt64(rand.Next(1, 20001));
+// ulong n = Convert.ToUInt64(rand.Next(1, 20001));
+ulong n = 983;
 
-var result = isPrime(n);
+var isPrimeNumber = isPrime(n);
 Console.WriteLine("***************************************************************\n");
-if (true)
+if (isPrimeNumber)
 {
   var primeRootNumber = findPrimeRootNumber(n);
-  Console.WriteLine($"primeRootNumber = {primeRootNumber.ToString()}");
+  Console.WriteLine($"primitive root number = {primeRootNumber.ToString()}");
   Console.WriteLine("***************************************************************\n");
   dh(n, primeRootNumber);
 }
@@ -45,13 +46,14 @@ ulong findPrimeRootNumber(ulong p)
 {
   var rand = new Random();
 
-  // ulong r = 2;
+  // r = 2
   // k = 1 to p-1
 
   var list = new List<ulong>();
 
   for (ulong r = 2; r < p; r++)
   {
+    Console.WriteLine("\t\t -----> [ {0} ]", r.ToString());
     var hash = new Hashtable();
     var isDistinct = false;
 
@@ -60,32 +62,46 @@ ulong findPrimeRootNumber(ulong p)
       // var result = Math.Pow(r, k) % p;
       var result = BigInteger.ModPow(r, k, p);
 
+      // var x = result % p;
+
+      // if (x == result)
+      // {
+      //   Console.WriteLine("{0} mod {1} = {2}", result.ToString(), p.ToString(), x.ToString()); ;
+      // }
+
       if (hash.ContainsKey(result))
       {
-        // Console.WriteLine("\t\t\t\t\tThe results {0} are distinct", result.ToString());
+        Console.WriteLine("\t\t\t\t({0}^{1}) mod {2} = {3} -----> The results [ {4} ] are distinct", r.ToString(), k.ToString(), p.ToString(), result.ToString(), result.ToString());
         isDistinct = true;
       }
       else
       {
         hash.Add(result, true);
-      }
-
-      // Console.WriteLine("\t\t\t\t({0}^{1}) % {2} = {3}", r.ToString(), k.ToString(), p.ToString(), result.ToString());
+        Console.WriteLine("\t\t\t\t({0}^{1}) mod {2} = {3}", r.ToString(), k.ToString(), p.ToString(), result.ToString());
+      }      
     }
 
     if (isDistinct)
     {
-      // Console.WriteLine("\t\tThe results are distinct, so {0} is a primitive root", r.ToString());
-      list.Add(r);
+      Console.WriteLine("\t\tThe results are distinct, so [ {0} ] is not a primitive root of [ {1} ]", r.ToString(), p.ToString());
     }
     else
     {
-      // Console.WriteLine("\t\t ######## The results are not distinct, so {0} is not a primitive root", r.ToString());
+      Console.WriteLine("\t\t [########] The results are not distinct, so [ {0} ] is a primitive root of [ {1} ]", r.ToString(), p.ToString());
+      list.Add(r);
     }
 
-
-    // Console.WriteLine("\n*******************************************************************************************\n");
+    Console.WriteLine("\n*******************************************************************************************\n");
   }
+
+  Console.WriteLine("Primilitive number of [{0}]", p.ToString());
+
+  list.ForEach(x =>
+  {
+    Console.Write("{0}, ", x.ToString());
+  });
+
+  Console.WriteLine("\n*******************************************************************************************\n");
 
   return list[rand.Next(0, list.Count)];
 }
@@ -119,8 +135,9 @@ BigInteger? dh(ulong modulusNumber, ulong baseNumber)
   Console.WriteLine("\n");
 
   // generates a private key (a secret random number)
-  int privateKeyA = rand.Next(10000);
-  int privateKeyB = rand.Next(10000);
+  // range = 1 to p - 1
+  long privateKeyA = rand.NextInt64(1, Convert.ToInt64(modulusNumber));
+  long privateKeyB = rand.NextInt64(1, Convert.ToInt64(modulusNumber));
 
   Console.WriteLine("privateKeyA {0}", privateKeyA);
   Console.WriteLine("privateKeyB {0}", privateKeyB);
