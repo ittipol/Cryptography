@@ -55,7 +55,6 @@ check_dir_exist() {
         echo "$DIR_PATH, Directory does not exist"
         CREATE_DIR="true"      
     fi
-
     
     if [[ "$CREATE_DIR" == "true" ]]; then
         mkdir -p "$DIR_PATH"

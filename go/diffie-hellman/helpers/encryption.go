@@ -1,7 +1,6 @@
-package main
+package helpers
 
 import (
-	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/ecdh"
@@ -11,74 +10,7 @@ import (
 	"io"
 	"log"
 	"math/big"
-
-	"github.com/fxtlabs/primes"
 )
-
-func main() {
-
-	fmt.Println("\n\nPrime Number")
-
-	// gen prime
-	primeNumber := generatePrime()
-
-	fmt.Println(primeNumber)
-	fmt.Println(len(primeNumber.String()))
-	fmt.Println(primeNumber.BitLen())
-
-	fmt.Println("BigInt as int64:", primeNumber.Int64())
-
-	if primes.IsPrime(int(primeNumber.Int64())) {
-		fmt.Printf("%d is prime\n", primeNumber)
-	} else {
-		fmt.Printf("%d is composite\n", primeNumber)
-	}
-
-	// =================================================
-
-	fmt.Println("\n\nECDH")
-
-	// Gen client key pair
-	clientPrivKey, clientPubKey := generateKeyPair()
-
-	// Gen server key pair
-	serverPrivKey, serverPubKey := generateKeyPair()
-
-	// Compute shared key
-	clientSecretKey := deriveSharedSecret(clientPrivKey, serverPubKey)
-	serverSecretKey := deriveSharedSecret(serverPrivKey, clientPubKey)
-
-	if !bytes.Equal(clientSecretKey, serverSecretKey) {
-		log.Fatalf("The secrets do not match")
-	} else {
-		log.Printf("The secrets match")
-	}
-
-	println(len(clientSecretKey))
-	println(len(serverSecretKey))
-
-	fmt.Println(clientSecretKey)
-	fmt.Println(serverSecretKey)
-
-	fmt.Printf("%x\n", clientSecretKey)
-	fmt.Printf("%x\n", serverSecretKey)
-
-	// =================================================
-
-	fmt.Println("\n\nAES")
-
-	plaintext := []byte("This is a secret message")
-
-	// AES
-	// encryptedData := aesEncrypt(plaintext, clientSecretKey)
-	// message := aesDecrypt(encryptedData, serverSecretKey)
-
-	// AES/GCM mode
-	base64CipherText := aesGcmModeEncrypt(plaintext, clientSecretKey)
-	message := aesGcmModeDecrypt(base64CipherText, serverSecretKey)
-
-	fmt.Println(message)
-}
 
 func generateKeyPair() (privKey *ecdh.PrivateKey, pubKey *ecdh.PublicKey) {
 

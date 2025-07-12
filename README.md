@@ -243,14 +243,16 @@ openssl rsautl -decrypt -in ./ciphertext -out ./plaintext -inkey key.pem
 ```
 
 ### Digital Signature Algorithms
+**Use to create digital signatures**
 - RSA (RC4)
 - the Digital Signature Standard (DSS), which incorporates - the Digital Signature Algorithm (DSA)
 - SHA, MD2, MD5
-- Elliptical Curve DSA
+- Elliptic Curve Digital Signature Algorithm (ECDSA) (use elliptic curve cryptography (ECC))
 
 ### Key Exchange Algorithms (Digital Envelope)
 - RSA, ANSI x9.17
 - the Diffie-Hellman exchange method
+  - ECDH (Elliptic Curve Diffie-Hellman) (use elliptic curve cryptography (ECC))
 
 ### Hash algorithms
 - MD5
@@ -265,6 +267,9 @@ openssl dgst -h
 
 # SHA-256
 echo -n 'message' | openssl dgst -sha256
+
+# SHA-256 (Hex)
+echo -n 'message' | openssl dgst -sha256 -hex
 
 # SHA-512
 echo -n 'message' | openssl dgst -sha512
