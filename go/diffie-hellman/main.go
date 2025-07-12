@@ -10,62 +10,93 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/big"
+
+	"github.com/fxtlabs/primes"
 )
 
 func main() {
 
-	clientCurve := ecdh.P256()
-	clientPrivKey, err := clientCurve.GenerateKey(rand.Reader)
-	if err != nil {
-		log.Fatalf("Error: %v", err)
-	}
-	clientPubKey := clientPrivKey.PublicKey()
+	fmt.Println("\n\nPrime Number")
 
-	serverCurve := ecdh.P256()
-	serverPrivKey, err := serverCurve.GenerateKey(rand.Reader)
-	if err != nil {
-		log.Fatalf("Error: %v", err)
+	// gen prime
+	primeNumber := generatePrime()
+
+	fmt.Println(primeNumber)
+	fmt.Println(len(primeNumber.String()))
+	fmt.Println(primeNumber.BitLen())
+
+	fmt.Println("BigInt as int64:", primeNumber.Int64())
+
+	if primes.IsPrime(int(primeNumber.Int64())) {
+		fmt.Printf("%d is prime\n", primeNumber)
+	} else {
+		fmt.Printf("%d is composite\n", primeNumber)
 	}
-	serverPubKey := serverPrivKey.PublicKey()
 
 	// =================================================
 
-	clientSecret, err := clientPrivKey.ECDH(serverPubKey)
-	if err != nil {
-		log.Fatalf("Error: %v", err)
-	}
-	serverSecret, err := serverPrivKey.ECDH(clientPubKey)
-	if err != nil {
-		log.Fatalf("Error: %v", err)
-	}
-	if !bytes.Equal(clientSecret, serverSecret) {
+	fmt.Println("\n\nECDH")
+
+	clientPrivKey, clientPubKey := generateKeyPair()
+	serverPrivKey, serverPubKey := generateKeyPair()
+
+	clientSecretKey := deriveSharedSecret(clientPrivKey, serverPubKey)
+	serverSecretKey := deriveSharedSecret(serverPrivKey, clientPubKey)
+
+	if !bytes.Equal(clientSecretKey, serverSecretKey) {
 		log.Fatalf("The secrets do not match")
+	} else {
+		log.Printf("The secrets match")
 	}
-	log.Printf("The secrets match")
-	println(len(clientSecret))
-	println(len(serverSecret))
 
-	fmt.Println(clientSecret)
-	fmt.Println(serverSecret)
+	println(len(clientSecretKey))
+	println(len(serverSecretKey))
 
-	fmt.Printf("%x\n", clientSecret)
-	fmt.Printf("%x\n", serverSecret)
+	fmt.Println(clientSecretKey)
+	fmt.Println(serverSecretKey)
 
-	fmt.Printf("\n")
+	fmt.Printf("%x\n", clientSecretKey)
+	fmt.Printf("%x\n", serverSecretKey)
 
 	// =================================================
+
+	fmt.Println("\n\nAES")
 
 	plaintext := []byte("This is a secret message")
 
 	// AES
-	// encryptedData := aesEncrypt(plaintext, clientSecret)
-	// message := aesDecrypt(encryptedData, serverSecret)
+	// encryptedData := aesEncrypt(plaintext, clientSecretKey)
+	// message := aesDecrypt(encryptedData, serverSecretKey)
 
 	// AES/GCM mode
-	base64CipherText := aesGcmModeEncrypt(plaintext, clientSecret)
-	message := aesGcmModeDecrypt(base64CipherText, serverSecret)
+	base64CipherText := aesGcmModeEncrypt(plaintext, clientSecretKey)
+	message := aesGcmModeDecrypt(base64CipherText, serverSecretKey)
 
 	fmt.Println(message)
+}
+
+func generateKeyPair() (privKey *ecdh.PrivateKey, pubKey *ecdh.PublicKey) {
+
+	curve := ecdh.P256() // curves secp256r1
+	privKey, err := curve.GenerateKey(rand.Reader)
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
+
+	pubKey = privKey.PublicKey()
+
+	return
+}
+
+func deriveSharedSecret(myPrivKey *ecdh.PrivateKey, otherPartyPublicKey *ecdh.PublicKey) []byte {
+
+	secretKey, err := myPrivKey.ECDH(otherPartyPublicKey)
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
+
+	return secretKey
 }
 
 func aesEncrypt(plaintext []byte, key []byte) string {
@@ -190,4 +221,9 @@ func randomByte() []byte {
 	}
 
 	return key
+}
+
+func generatePrime() *big.Int {
+	prime, _ := rand.Prime(rand.Reader, 256)
+	return prime
 }

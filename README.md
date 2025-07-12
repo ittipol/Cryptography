@@ -261,6 +261,8 @@ openssl rsautl -decrypt -in ./ciphertext -out ./plaintext -inkey key.pem
 - HMAC (Hash-Based Message Authentication Code)
 
 ``` bash
+openssl dgst -h
+
 # SHA-256
 echo -n 'message' | openssl dgst -sha256
 
