@@ -221,6 +221,7 @@ Use a public key-private key pairing: data encrypted with the public key can onl
 - Elliptical Curve Cryptography (ECC)
 - TLS/SSL protocol
 
+**RSA**
 ``` bash
 # Generate a private key and a public key in PEM format
 openssl genrsa -out key.pem 2048
@@ -242,6 +243,22 @@ openssl rsautl -encrypt -in ./message.txt -out ./ciphertext -pubin -inkey key.pe
 openssl rsautl -decrypt -in ./ciphertext -out ./plaintext -inkey key.pem
 ```
 
+**Elliptic curve cryptography (ECC)**
+``` bash
+# List a curve names
+openssl ecparam -list_curves
+
+# Generate a private key
+openssl ecparam -name <curve> -genkey -noout -out private_key.pem
+openssl ecparam -name prime256v1 -genkey -noout -out private_key.pem
+
+# Extract the public key
+openssl ec -in private_key.pem -outform PEM -pubout -out public_key.pem
+
+# Generate the CSR
+openssl req -new -sha256 -key private_key.pem -out my.csr
+```
+
 ### Digital Signature Algorithms
 **Use to create digital signatures**
 - RSA (RC4)
@@ -256,11 +273,12 @@ openssl rsautl -decrypt -in ./ciphertext -out ./plaintext -inkey key.pem
 
 ### Hash algorithms
 - MD5
-- SHA-224
-- SHA-256
-- SHA-384
-- SHA-512
+- SHA-224 (keyless)
+- SHA-256 (keyless)
+- SHA-384 (keyless)
+- SHA-512 (keyless)
 - HMAC (Hash-Based Message Authentication Code)
+  - HmacSHA256 (Keyed-Hash Message Authentication Code with SHA-256)
 
 ``` bash
 openssl dgst -h
@@ -274,7 +292,7 @@ echo -n 'message' | openssl dgst -sha256 -hex
 # SHA-512
 echo -n 'message' | openssl dgst -sha512
 
-# HMAC-SHA256
+# HMAC-SHA256 (hash with secret key)
 echo -n "message" | openssl dgst -sha256 -hmac secret_key
 ```
 

@@ -90,6 +90,9 @@ func generateKeyPair() (privKey *ecdh.PrivateKey, pubKey *ecdh.PublicKey) {
 
 	pubKey = privKey.PublicKey()
 
+	fmt.Printf("privKey length: [%v]\n", len(privKey.Bytes()))
+	fmt.Printf("pubKey length: [%v]\n", len(pubKey.Bytes()))
+
 	return
 }
 
