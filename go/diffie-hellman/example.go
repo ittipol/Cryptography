@@ -32,7 +32,10 @@ func test() {
 
 	fmt.Println("\n\nECDH")
 
-	serverPrivKey, serverPubKey := generateKeyPair()
+	serverPrivKey, serverPubKey, err := generateKeyPair()
+	if err != nil {
+		panic(err)
+	}
 
 	fmt.Println(serverPubKey.Bytes())
 	serverHexString := hex.EncodeToString(serverPubKey.Bytes())
