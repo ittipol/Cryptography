@@ -46,7 +46,7 @@ func test() {
 
 	byteArray, err := hex.DecodeString(publicKeyClientHexString)
 	if err != nil {
-		log.Fatalf("Error decoding hex string: %v", err)
+		log.Printf("Error decoding hex string: %v", err)
 	}
 
 	fmt.Printf("Client Hex String: %s\n", publicKeyClientHexString)
@@ -57,7 +57,7 @@ func test() {
 	curve := ecdh.P256()
 	clientPubKey, err := curve.NewPublicKey(byteArray)
 	if err != nil {
-		log.Fatalf("Error: %v", err)
+		log.Printf("Error: %v", err)
 	}
 
 	// Compute shared key
@@ -71,7 +71,7 @@ func test() {
 	// serverSecretKey := deriveSharedSecret(serverPrivKey, clientPubKey)
 
 	// if !bytes.Equal(clientSecretKey, serverSecretKey) {
-	// 	log.Fatalf("The secrets do not match")
+	// 	log.Printf("The secrets do not match")
 	// } else {
 	// 	log.Printf("The secrets match")
 	// }

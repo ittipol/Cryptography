@@ -17,7 +17,7 @@ func generateKeyPair() (privKey *ecdh.PrivateKey, pubKey *ecdh.PublicKey) {
 	curve := ecdh.P256() // curves secp256r1
 	privKey, err := curve.GenerateKey(rand.Reader)
 	if err != nil {
-		log.Fatalf("Error: %v", err)
+		log.Printf("Error: %v", err)
 	}
 
 	pubKey = privKey.PublicKey()
@@ -29,7 +29,7 @@ func deriveSharedSecret(myPrivKey *ecdh.PrivateKey, otherPartyPublicKey *ecdh.Pu
 
 	secretKey, err := myPrivKey.ECDH(otherPartyPublicKey)
 	if err != nil {
-		log.Fatalf("Error: %v", err)
+		log.Printf("Error: %v", err)
 	}
 
 	return secretKey
@@ -43,7 +43,7 @@ func aesEncrypt(plaintext []byte, key []byte) string {
 	block, err := aes.NewCipher(key)
 
 	if err != nil {
-		log.Fatalf("could not create new cipher: %v", err)
+		log.Printf("could not create new cipher: %v", err)
 	}
 
 	fmt.Printf("aes.BlockSize: %v \n", aes.BlockSize)
@@ -53,7 +53,7 @@ func aesEncrypt(plaintext []byte, key []byte) string {
 	fmt.Printf("iv#1: %v \n", iv)
 
 	if _, err = io.ReadFull(rand.Reader, iv); err != nil {
-		log.Fatalf("could not encrypt: %v", err)
+		log.Printf("could not encrypt: %v", err)
 	}
 
 	fmt.Printf("iv#2: %v \n", iv)
@@ -70,16 +70,16 @@ func aesEncrypt(plaintext []byte, key []byte) string {
 func aesDecrypt(encryptedData string, key []byte) string {
 	cipherText, err := base64.StdEncoding.DecodeString(encryptedData)
 	if err != nil {
-		log.Fatalf("could not base64 decode: %v", err)
+		log.Printf("could not base64 decode: %v", err)
 	}
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		log.Fatalf("could not create new cipher: %v", err)
+		log.Printf("could not create new cipher: %v", err)
 	}
 
 	if len(cipherText) < aes.BlockSize {
-		log.Fatalf("invalid ciphertext block size")
+		log.Printf("invalid ciphertext block size")
 	}
 
 	iv := cipherText[:aes.BlockSize]
@@ -123,17 +123,17 @@ func aesGcmModeDecrypt(base64CipherText string, key []byte) string {
 
 	cipherText, err := base64.StdEncoding.DecodeString(base64CipherText)
 	if err != nil {
-		log.Fatalf("could not base64 decode: %v", err)
+		log.Printf("could not base64 decode: %v", err)
 	}
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Printf(err.Error())
 	}
 
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Printf(err.Error())
 	}
 
 	decryptedNonce := cipherText[:gcm.NonceSize()]
@@ -141,7 +141,7 @@ func aesGcmModeDecrypt(base64CipherText string, key []byte) string {
 
 	decryptedPlaintext, err := gcm.Open(nil, decryptedNonce, encryptedData, nil)
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Printf(err.Error())
 	}
 
 	fmt.Printf("Decrypted Plaintext: %s\n", decryptedPlaintext)
@@ -153,7 +153,7 @@ func randomByte() []byte {
 	key := make([]byte, 32)
 	_, err := io.ReadFull(rand.Reader, key)
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Printf(err.Error())
 	}
 
 	return key
