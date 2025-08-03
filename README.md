@@ -1,5 +1,61 @@
 # Cryptography
 
+## Encoding • Hashing • Encryption
+### Encoding
+- Not security
+- Not secrecy
+- Reversible
+
+**e.g.,**
+- Binary
+- Hex
+- base64
+- ASCII
+- UTF-8
+
+### Hashing
+- Use for storing password
+- Fixed length
+- Not reversible
+
+**e.g.,**
+- SHA-256
+  - Output 256 bits length (Base2)
+  - Hex = 64 characters
+  - Byte (ASCII) = 32 characters
+  - e.g., ab530a13e45914982b79f9b7e3fba994cfd1f3fb22f71cea1afbf02b460c6d1d (Hex format)
+- SHA-512
+  - Output 512 bits length (Base2)
+  - Hex = 128 characters
+  - Byte (ASCII) = 64 characters
+  - e.g., f8daf57a3347cc4d6b9d575b31fe6077e2cb487f60a96233c08cb479dbf31538cc915ec6d48bdbaa96ddc1a16db4f4f96f37276cfcb3510b8246241770d5952c (Hex format)
+- HMACSHA256
+  - Output 256 bits length (Base2)
+  - Hex = 64 characters
+  - Byte (ASCII) = 32 characters
+  - e.g., 8b5f48702995c1598c573db1e21866a9b825d4a794d169d7060a03605796360b (Hex format)
+- BCrypt
+- Argon2
+
+### Encryption
+- Data confidentiality
+
+**e.g.,**
+- AES
+  - Use symmetric keys
+  - Key lengths: 128, 192, and 256 bits
+  - AES-256: Use 256-bits for input block size and key size
+  - AES-256 ECB Mode (Electronic Codebook)
+    - Not secure to use, There is a security risk
+  - AES-256 CBC Mode (Cipher Block Chaining)
+    - Use Initialization Vector (IV)
+  - AES-256 CFB Mode (Cipher Feedback)
+  - AES-256 CTR Mode (Counter)
+  - AES-256 GCM Mode (Galois/Counter)
+    - Use nonce and authentication tag for encryption
+- RSA
+- Elliptic Curve Cryptography (ECC)
+
 ## Public Key Infrastructure (PKI)
 ### Symmetric key encryption / Secret key encryption
 ```
